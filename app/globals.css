@@ -1,26 +1,77 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --black: #080A0F;
+  --black2: #0D1117;
+  --black3: #111820;
+  --black4: #161E2A;
+  --black5: #1C2636;
+  --blue: #1A6FE8;
+  --blue-bright: #2D88FF;
+  --blue-glow: rgba(45,136,255,0.18);
+  --green: #00D97E;
+  --green-dim: rgba(0,217,126,0.15);
+  --yellow: #F5C842;
+  --yellow-dim: rgba(245,200,66,0.15);
+  --red: #FF5B5B;
+  --red-dim: rgba(255,91,91,0.15);
+  --text-primary: #EDF2FF;
+  --text-secondary: #7B8FA8;
+  --text-muted: #3D4F63;
+  --border: rgba(255,255,255,0.06);
+  --border-bright: rgba(255,255,255,0.12);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-black: var(--black);
+  --color-black2: var(--black2);
+  --color-black3: var(--black3);
+  --color-black4: var(--black4);
+  --color-black5: var(--black5);
+  --color-blue: var(--blue);
+  --color-blue-bright: var(--blue-bright);
+  --color-blue-glow: var(--blue-glow);
+  --color-green: var(--green);
+  --color-green-dim: var(--green-dim);
+  --color-yellow: var(--yellow);
+  --color-yellow-dim: var(--yellow-dim);
+  --color-red: var(--red);
+  --color-red-dim: var(--red-dim);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-border: var(--border);
+  --color-border-bright: var(--border-bright);
+
+  --font-sans: var(--font-inter), Arial, Helvetica, sans-serif;
+  --animate-pulse-live: pulse-live 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+
+@keyframes flash-up {
+  0% { background-color: var(--green-dim); }
+  100% { background-color: transparent; }
+}
+
+@keyframes flash-down {
+  0% { background-color: var(--red-dim); }
+  100% { background-color: transparent; }
+}
+
+@utility price-flash-up {
+  animation: flash-up 300ms ease-out;
+}
+
+@utility price-flash-down {
+  animation: flash-down 300ms ease-out;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--black);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
 }
