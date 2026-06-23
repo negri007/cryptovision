@@ -3,8 +3,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { IconBell, IconSearch, IconChevronDown, IconUser, IconSettings, IconLogout, IconCrown } from '@tabler/icons-react';
+import { IconBell, IconSearch, IconChevronDown, IconUser, IconSettings, IconLogout, IconCrown, IconMenu2 } from '@tabler/icons-react';
 import { useAuthStore } from '@/store/authStore';
+import { useUiStore } from '@/store/uiStore';
 import { signOut } from '@/lib/firebase/auth';
 import { SearchModal } from './SearchModal';
 import { NotificationPanel } from './NotificationPanel';
@@ -28,6 +29,7 @@ export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const user = useAuthStore(s => s.user);
+  const toggleSidebar = useUiStore(s => s.toggleSidebar);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -68,13 +70,21 @@ export function Header() {
   };
 
   return (
-    <header className="flex items-center justify-between px-6 py-4 border-b flex-shrink-0" style={{ background: 'var(--black2)', borderColor: 'var(--border)' }}>
-      {/* Page title */}
-      <div>
-        <h1 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{pageInfo.title}</h1>
+    <header className="flex items-center justify-between px-4 md:px-6 py-4 border-b flex-shrink-0" style={{ background: 'var(--black2)', borderColor: 'var(--border)' }}>
+      {/* Left: hamburger + title */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={toggleSidebar}
+          className="p-1.5 rounded-lg hover:bg-white/5 lg:hidden"
+        >
+          <IconMenu2 size={20} style={{ color: 'var(--text-secondary)' }} />
+        </button>
+        <div>
+          <h1 className="text-base md:text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{pageInfo.title}</h1>
         {pageInfo.subtitle && (
-          <p className="text-xs capitalize" style={{ color: 'var(--text-muted)' }}>{today}</p>
+          <p className="text-xs capitalize hidden sm:block" style={{ color: 'var(--text-muted)' }}>{today}</p>
         )}
+        </div>
       </div>
 
       {/* Right side actions */}
