@@ -10,6 +10,13 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "CryptoVision",
   description: "Análise de criptomoedas e mercado financeiro em tempo real",
+  manifest: "/manifest.json",
+  themeColor: "#080A0F",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "CryptoVision",
+  },
 };
 
 export default function RootLayout({
