@@ -1,24 +1,13 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { useAuthStore } from '@/store/authStore';
-import { useMarketStore } from '@/store/marketStore';
-import { auth } from '@/lib/firebase/client';
-import { onAuthStateChanged } from 'firebase/auth';
+import { useAuth } from '@/hooks/useAuth';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { Ticker } from '@/components/layout/Ticker';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const setUser = useAuthStore(s => s.setUser);
-
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, user => {
-      setUser(user);
-    });
-    return () => unsub();
-  }, [setUser]);
+  useAuth();
 
   return (
     <AuthGuard>

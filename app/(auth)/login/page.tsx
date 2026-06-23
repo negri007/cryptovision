@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { IconBrandGoogle, IconLock, IconMail, IconEye, IconEyeOff, IconChartLine } from '@tabler/icons-react';
 import { signInWithEmail, signInWithGoogle, sendPasswordReset } from '@/lib/firebase/auth';
+import { useAuth } from '@/hooks/useAuth';
 import { z } from 'zod';
 
 const loginSchema = z.object({
@@ -14,6 +15,7 @@ const loginSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +24,12 @@ export default function LoginPage() {
   const [resetSent, setResetSent] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.replace('/dashboard');
+    }
+  }, [user, authLoading, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
