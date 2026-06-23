@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { IconBell, IconSearch, IconChevronDown, IconUser, IconSettings, IconLogout, IconCrown } from '@tabler/icons-react';
 import { useAuthStore } from '@/store/authStore';
 import { signOut } from '@/lib/firebase/auth';
+import { SearchModal } from './SearchModal';
+import { NotificationPanel } from './NotificationPanel';
 
 const PAGE_TITLES: Record<string, { title: string; subtitle?: string }> = {
   '/dashboard': { title: 'Dashboard', subtitle: 'Visão geral do mercado' },
@@ -27,21 +29,37 @@ export function Header() {
   const router = useRouter();
   const user = useAuthStore(s => s.user);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [notifications] = useState(3);
+  const [showSearch, setShowSearch] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notificationCount] = useState(3);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
 
   const pageInfo = PAGE_TITLES[pathname] || { title: 'CryptoVision' };
   const today = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setShowDropdown(false);
       }
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+        setShowNotifications(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setShowSearch(s => !s);
+      }
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
   }, []);
 
   const handleLogout = async () => {
@@ -68,21 +86,24 @@ export function Header() {
         </div>
 
         {/* Global search */}
-        <button id="header-search" className="flex items-center gap-2 px-3 py-1.5 rounded-xl border text-sm transition-colors hover:border-blue-bright" style={{ background: 'var(--black3)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }}>
+        <button id="header-search" onClick={() => setShowSearch(true)} className="flex items-center gap-2 px-3 py-1.5 rounded-xl border text-sm transition-colors hover:border-blue-bright" style={{ background: 'var(--black3)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }}>
           <IconSearch size={15} />
           <span className="hidden md:block">Buscar ativo...</span>
           <kbd className="hidden md:inline-flex items-center px-1.5 rounded text-xs" style={{ background: 'var(--black4)', color: 'var(--text-muted)' }}>⌘K</kbd>
         </button>
 
         {/* Notifications */}
-        <button id="header-notifications" className="relative p-2 rounded-xl transition-colors hover:bg-white/5">
-          <IconBell size={18} style={{ color: 'var(--text-secondary)' }} />
-          {notifications > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full text-xs flex items-center justify-center font-bold" style={{ background: 'var(--blue)', color: '#fff' }}>
-              {notifications}
-            </span>
-          )}
-        </button>
+        <div className="relative" ref={notifRef}>
+          <button id="header-notifications" onClick={() => setShowNotifications(s => !s)} className="relative p-2 rounded-xl transition-colors hover:bg-white/5">
+            <IconBell size={18} style={{ color: 'var(--text-secondary)' }} />
+            {notificationCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full text-xs flex items-center justify-center font-bold" style={{ background: 'var(--blue)', color: '#fff' }}>
+                {notificationCount}
+              </span>
+            )}
+          </button>
+          <NotificationPanel open={showNotifications} onClose={() => setShowNotifications(false)} />
+        </div>
 
         {/* User dropdown */}
         <div className="relative" ref={dropdownRef}>
@@ -147,6 +168,7 @@ export function Header() {
           )}
         </div>
       </div>
+      <SearchModal open={showSearch} onClose={() => setShowSearch(false)} />
     </header>
   );
 }
